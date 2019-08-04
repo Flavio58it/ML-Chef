@@ -1,0 +1,1 @@
+./mongodump --db=ml_chef --out=/Users/Mona/Desktop/backup
