@@ -22,7 +22,7 @@ graph = None
 def prep_model():
     global model
     global graph
-    model = load_model("food_trained_cnn.h5")
+    model = load_model("food_trained_cnn_v2.h5")
     graph = K.get_session().graph
 
 
@@ -56,7 +56,7 @@ def upload_file():
 
             # Load the saved image using Keras and resize it to the trained model size
             # format of 64x64 pixels
-            image_size = (64, 64)
+            image_size = (256, 256)
             im = keras.preprocessing.image.load_img(filepath,
                                                     target_size=image_size,
                                                     grayscale=False)
@@ -66,10 +66,18 @@ def upload_file():
 
             global graph
             with graph.as_default():
-                preds = model.predict(image)
-                results = decode_predictions(preds)
+                #preds = model.predict(image)
+                #x = image.img_to_array(img)
+                #x = np.expand_dims(x, axis=0)
+                #x = preprocess_input(x)
+                class_index_to_class = {v: k for k,
+                            v in training_set.class_indices.items()}
+                index_max = np.argmax(model.predict(image)[0])
+                prediction = class_index_to_class[index_max]
+                #plt.imshow(img)
+                print('Predicted: ', prediction, ', score: ', index_max)
                 # print the results
-                print(results)
+                #print(results)
 
                 data["predictions"] = []
 
