@@ -1,0 +1,1 @@
+./mongoimport -d ml_chef -c recipes --type csv --file ../ScrapeData/csv_recipes/recipe_df1.csv --headerline
