@@ -19,14 +19,11 @@ from flask_pymongo import PyMongo
 app = Flask(__name__, template_folder='./templates')
 
 # Use flask_pymongo to set up mongo connection
-# app.config["MONGO_URI"] = "mongodb://localhost:27017/mars_app"
-# mongo = PyMongo(app)
-# app.config['UPLOAD_FOLDER'] = 'Uploads'
-
+app.config["MONGO_URI"] = "mongodb://localhost:27017/ML-Chef_db"
+mongo = PyMongo(app)
 
 model = None
 graph = None
-
 
 def prep_model():
     global model
@@ -175,8 +172,17 @@ def index():
             data["success"] = True
             third_image = data["predictions"][0]
 
+            label1 = first_image['label']
+            label2 = second_image['label']
+            label3 = third_image['label']
+
+            # Search database for recipes matching labels
+            recipe = mongo.db.ML_Chef.find({'tag': [label1,label2,label3]})
+            print(recipe)
+
             data_dict = {'first_image': first_image,
-                         'second_image': second_image, 'third_image': third_image}
+                         'second_image': second_image, 
+                         'third_image': third_image}
 
             return render_template("index.html", data1=data_dict)
 
