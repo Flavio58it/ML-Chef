@@ -25,6 +25,7 @@ mongo = PyMongo(app)
 model = None
 graph = None
 
+
 def prep_model():
     global model
     global graph
@@ -48,6 +49,14 @@ def prepare_image(img):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     data = {"success": False}
+
+    dict_empty = {'first_image': '',
+                  'second_image': '',
+                  'third_image': '',
+                  'recipe': {'imagesrc': '',
+                             'title': '',
+                             'ingredients': '',
+                             'tags': ['', '', '']}}
 
     # print(request.files and list(request.files.keys()))
     if (request.method == 'POST'
@@ -175,18 +184,33 @@ def index():
             label1 = first_image['label']
             label2 = second_image['label']
             label3 = third_image['label']
+            print(label1)
+
+            labels = []
+
+            if first_image['probability'] > .5:
+                labels.append(label1)
+
+            if second_image['probability'] > .5:
+                labels.append(label2)
+
+            if third_image['probability'] > .5:
+                labels.append(label3)
 
             # Search database for recipes matching labels
-            recipe = mongo.db.ML_Chef.find({'tag': [label1,label2,label3]})
+            recipe = mongo.db.ML_Chef.find_one({'id': '1'})
             print(recipe)
 
             data_dict = {'first_image': first_image,
-                         'second_image': second_image, 
-                         'third_image': third_image}
+                         'second_image': second_image,
+                         'third_image': third_image,
+                         'recipe': recipe}
+            if recipe is None:
+                data_dict['recipe'] = dict_empty['recipe']
 
             return render_template("index.html", data1=data_dict)
 
-    return render_template("index.html", data1={})#, data1=data_dict)  # , data1 = data)
+    return render_template("index.html", data1=dict_empty)
 
 
 if __name__ == "__main__":
