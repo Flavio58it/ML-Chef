@@ -16,4 +16,4 @@ Overview:
 - Scale up and fine tune Inceptionv3 model with 10 classes of data
 
 
-![random.png](Images/random.png)
+![random.png](images/random.png)
